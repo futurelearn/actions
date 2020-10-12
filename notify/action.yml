@@ -1,9 +1,13 @@
 name: 'Notify'
 description: 'Notify Slack for CI builds'
 inputs:
-  slack_webhook:
+  webhook:
     description: "Full URL of the Slack webhook"
     required: true
+  channel:
+    description: "The channel to post the notification to"
+    required: true
+    default: builds
 runs:
   using: "composite"
   steps:
@@ -13,4 +17,5 @@ runs:
         COMMIT_AUTHOR: ${{ github.event.pusher.name }}
         COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
         JOB_STATUS: ${{ job.status }}
-        SLACK_WEBHOOK: ${{ inputs.slack_webhook }}
+        SLACK_CHANNEL: ${{ inputs.channel }}
+        SLACK_WEBHOOK: ${{ inputs.webhook }}

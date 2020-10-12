@@ -3,44 +3,57 @@
 # Notify
 #
 
-BRANCH_NAME="$(echo "$GITHUB_REF" |cut -d "/" -f3)"
+BRANCH_NAME=$(echo "$GITHUB_REF" |cut -d "/" -f3)
+COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" | head -n1)
 
 case $JOB_STATUS in
-  success) STATUS="Succeeded";;
-  failure) STATUS="Failed";;
-  cancelled) STATUS="Cancelled";;
+  success)
+    STATUS=":tada: Succeeded"
+    COLOR="good"
+    ;;
+  failure)
+    STATUS=":pouting_cat: Failed"
+    COLOR="danger"
+    ;;
+  cancelled)
+    STATUS="Cancelled"
+    COLOR="#cddbda"
+    ;;
 esac
 
 IFS='' read -r -d '' PAYLOAD <<EOF
 {
-  "text": "Test message",
-  "blocks": [
+  "channel": "$SLACK_CHANNEL",
+  "attachments": [
     {
-      "type": "section",
-      "text": {
-        "type": "mrkdwn",
-        "text": "<https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID|*$GITHUB_REPOSITORY (#$GITHUB_RUN_NUMBER)*>"
-      }
-    },
-    {
-      "type": "section",
+      "color": "$COLOR",
+      "title": "$GITHUB_REPOSITORY (#$GITHUB_RUN_NUMBER)",
+      "title_link": "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID",
       "fields": [
         {
-          "type": "mrkdwn",
-          "text": "*Status*\n$STATUS"
+          "title": "Status",
+          "value": "$STATUS",
+          "short": true
         },
         {
-          "type": "mrkdwn",
-          "text": "*Committer*\n$COMMIT_AUTHOR"
+          "title": "Committer",
+          "value": "$COMMIT_AUTHOR",
+          "short": true
         },
         {
-        "type": "mrkdwn",
-        "text": "*Commit*\n$(echo "$COMMIT_MESSAGE" | head -n1)\n(<https://github.com/$GITHUB_REPOSITORY/commit/$GITHUB_SHA|${GITHUB_SHA: -6}> / $BRANCH_NAME)"
-        },
+          "title": "Commit",
+          "value": "$COMMIT_MESSAGE\n(<https://github.com/$GITHUB_REPOSITORY/commit/$GITHUB_SHA|${GITHUB_SHA: -6}> / $BRANCH_NAME)",
+          "short": false
+        }
       ]
     }
   ]
 }
 EOF
 
-curl -XPOST -H "Content-Type: application/json" "$SLACK_WEBHOOK" -d "$PAYLOAD"
+RESULT=$(curl -s -XPOST -H "Content-Type: application/json" "$SLACK_WEBHOOK" -d "$PAYLOAD")
+
+if [[ $RESULT != "ok" ]]; then
+  echo "Error returned by Slack: $RESULT"
+  exit 1
+fi
