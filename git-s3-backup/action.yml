@@ -1,0 +1,18 @@
+name: Git S3 Backup
+description: Backup a Git repository to an S3 bucket
+inputs:
+  bucket:
+    description: The name of the S3 bucket to backup to
+    required: true
+  prefix:
+    description: The S3 key prefix for the object
+    required: true
+    default: current
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/run.sh
+      shell: bash
+      env:
+        S3_BUCKET: ${{ inputs.bucket }}
+        S3_PREFIX: ${{ inputs.prefix }}
