@@ -1,0 +1,7 @@
+name: Update Release Branch
+description: Update the release branch after a CI build
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/run.sh
+      shell: bash
