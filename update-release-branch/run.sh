@@ -20,7 +20,7 @@ function build_commit_not_yet_promoted() {
 }
 
 function push_force_with_lease() {
-  git push --force-with-lease="origin/${PASSED_BRANCH}" origin "${GITHUB_SHA}:${PASSED_BRANCH}"
+  git push --force-with-lease="origin/${PASSED_BRANCH}" origin "${GITHUB_SHA}:refs/head/${PASSED_BRANCH}"
 }
 
 function succeed() {
