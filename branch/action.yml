@@ -1,0 +1,12 @@
+name: Branch
+description: Output details about the branch
+outputs:
+  name:
+    description: The name of the current branch
+    value: ${{ steps.branch_name.outputs.branch }}
+runs:
+  using: "composite"
+  steps:
+    - id: branch_name
+      run: echo ::set-output name=branch::${GITHUB_REF#refs/heads/}
+      shell: bash
