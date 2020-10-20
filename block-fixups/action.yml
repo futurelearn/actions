@@ -1,0 +1,9 @@
+name: Block fixup commits
+description: Alert on a PR when we have a fixup commit
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/run.sh
+      shell: bash
+      env:
+        DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
