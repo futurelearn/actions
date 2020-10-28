@@ -1,0 +1,37 @@
+name: Diff Contains
+description: Return true if we find a search team in a git diff
+inputs:
+  search_term:
+    required: true
+outputs:
+  result:
+    description: Returns true or false as strings
+    value: ${{ steps.contains.outputs.result }}
+runs:
+  using: "composite"
+  steps:
+    - id: contains
+      shell: bash
+      env:
+        SEARCH_TERM: ${{ inputs.search_term }}
+      run: |
+        set -xe
+
+        if [[ $GITHUB_BASE_REF ]]; then
+          # Pull Request
+          git fetch origin $GITHUB_BASE_REF --depth=1
+          export DIFF=$(git diff -i -S\""${SEARCH_TERM}"\" --name-only origin/$GITHUB_BASE_REF $GITHUB_SHA)
+        else
+          # Push
+          git fetch origin ${{ github.event.before }} --depth=1
+          export DIFF=$(git diff -i -S\""${SEARCH_TERM}"\" --name-only ${{ github.event.before }} $GITHUB_SHA )
+        fi
+
+        RESULT=false
+        if [[ $DIFF != "" ]]; then
+          echo $DIFF
+
+          RESULT=true
+        fi
+
+        echo ::set-output name=result::$RESULT
