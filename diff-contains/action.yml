@@ -1,7 +1,8 @@
 name: Diff Contains
 description: Return true if we find a search team in a git diff
 inputs:
-  search_term:
+  search:
+    description: A word to search for
     required: true
 outputs:
   result:
@@ -12,24 +13,15 @@ runs:
   steps:
     - id: contains
       shell: bash
-      env:
-        SEARCH_TERM: ${{ inputs.search_term }}
       run: |
         set -xe
 
-        if [[ $GITHUB_BASE_REF ]]; then
-          # Pull Request
-          git fetch origin $GITHUB_BASE_REF --depth=1
-          export DIFF=$(git diff -i -S\""${SEARCH_TERM}"\" --name-only origin/$GITHUB_BASE_REF $GITHUB_SHA)
-        else
-          # Push
-          git fetch origin ${{ github.event.before }} --depth=1
-          export DIFF=$(git diff -i -S\""${SEARCH_TERM}"\" --name-only ${{ github.event.before }} $GITHUB_SHA )
-        fi
+        git fetch origin ${{ github.event.repository.default_branch }} --depth=1
+        export DIFF=$(git diff -i -S${{ inputs.search }} --name-only origin/${{ github.event.repository.default_branch }} $GITHUB_SHA)
 
         RESULT=false
         if [[ $DIFF != "" ]]; then
-          echo $DIFF
+          echo -e "$DIFF"
 
           RESULT=true
         fi
