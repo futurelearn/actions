@@ -20,7 +20,7 @@ FIXUPS=$(commit_list | grep -c "fixup\!\?" || true)
 SQUASHES=$(commit_list | grep -c "squash\!\?" || true)
 
 if [ "$FIXUPS" -gt "0" ] || [ "$SQUASHES" -gt "0" ]; then
-  echo "fixup! commits: ${FIXUPS}"
-  echo "squash! commits: ${SQUASHES}"
-  exit 1
+  echo ::set-output name=result::"fixup! commits: ${FIXUPS} squash! commits: ${SQUASHES}"
 fi
+
+
