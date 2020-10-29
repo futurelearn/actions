@@ -13,17 +13,7 @@ runs:
   steps:
     - id: contains
       shell: bash
-      run: |
-        set -xe
-
-        git fetch origin ${{ github.event.repository.default_branch }} --depth=1
-        export DIFF=$(git diff -i -S${{ inputs.search }} --name-only origin/${{ github.event.repository.default_branch }} $GITHUB_SHA)
-
-        RESULT=false
-        if [[ $DIFF != "" ]]; then
-          echo -e "$DIFF"
-
-          RESULT=true
-        fi
-
-        echo ::set-output name=result::$RESULT
+      run: ${{ github.action_path }}/run.sh
+      env:
+        SEARCH_TERM: ${{ inputs.search }}
+        DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
