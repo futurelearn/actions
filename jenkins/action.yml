@@ -1,0 +1,29 @@
+name: Jenkins
+description: Trigger a Jenkins job
+inputs:
+  url:
+    description: URL of the servers instance
+    required: true
+  user:
+    description: User to trigger the job
+    required: true
+  token:
+    description: Token of the user to authenticate with Jenkins
+    required: true
+  job_name:
+    description: Name of the job to trigger
+    required: true
+  parameters:
+    description: Comma delimited set of parameters to pass in, eg PARAM_A=foo,PARAM_B=bar
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/run.sh
+      shell: bash
+      env:
+        JOB_NAME: ${{ inputs.job_name }}
+        PARAMETERS: ${{ inputs.parameters }}
+        TOKEN: ${{ inputs.token }}
+        URL: ${{ inputs.url }}
+        USER: ${{ inputs.user }}
