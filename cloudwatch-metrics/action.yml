@@ -1,0 +1,17 @@
+name: CloudWatch Metrics
+description: Populate CloudWatch with metrics about a workflow
+
+inputs:
+  namespace:
+    description: Namespace that metrics are written to
+    required: true
+    default: GitHubActions
+
+runs:
+  using: "composite"
+  steps:
+    - run: ${{ github.action_path }}/run.sh
+      shell: bash
+      env:
+        CLOUDWATCH_NAMESPACE: ${{ inputs.namespace }}
+        GITHUB_TOKEN: ${{ github.token }}
