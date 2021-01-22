@@ -4,6 +4,8 @@ inputs:
   webhook:
     description: "Full URL of the Slack webhook"
     required: true
+  status:
+    description: "The optional status of the job, either \"success\", \"failure\" or \"cancelled\""
   channel:
     description: "The channel to post the notification to"
     required: true
@@ -16,6 +18,7 @@ runs:
       env:
         COMMIT_AUTHOR: ${{ github.event.pusher.name }}
         COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+        DEFINED_JOB_STATUS: ${{ inputs.status }}
         JOB_STATUS: ${{ job.status }}
         SLACK_CHANNEL: ${{ inputs.channel }}
         SLACK_WEBHOOK: ${{ inputs.webhook }}
