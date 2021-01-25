@@ -23,6 +23,10 @@ case $JOB_STATUS in
     STATUS="Cancelled"
     COLOR="#cddbda"
     ;;
+  *)
+    STATUS="Unknown"
+    COLOR="#cddbda"
+    ;;
 esac
 
 IFS='' read -r -d '' PAYLOAD <<EOF
