@@ -63,5 +63,10 @@ RESULT=$(curl -s -XPOST -H "Content-Type: application/json" "$SLACK_WEBHOOK" -d 
 
 if [[ $RESULT != "ok" ]]; then
   echo "Error returned by Slack: $RESULT"
+
+  if [[ $RESULT == "invalid_payload" ]]; then
+    echo -e "Payload\n==========\n${PAYLOAD}\n==========="
+  fi
+
   exit 1
 fi
