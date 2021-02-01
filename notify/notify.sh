@@ -4,7 +4,7 @@
 #
 
 BRANCH_NAME=$(echo "$GITHUB_REF" |cut -d "/" -f3)
-COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" | head -n1)
+COMMIT_MESSAGE=$(echo "$COMMIT_MESSAGE" | head -n1 | sed 's/"/\\"/g')
 
 if [[ -n $DEFINED_JOB_STATUS ]]; then
   JOB_STATUS=$DEFINED_JOB_STATUS
